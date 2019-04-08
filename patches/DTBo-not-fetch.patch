@@ -1,0 +1,25 @@
+--- sources/meta-fsl-bsp-release/imx/meta-bsp/classes/image_types_fsl.bbclass	2019-01-09 16:53:12.650801453 +0530
++++ sources/meta-seco-bsp-release-imx8-3-0-0/image_types_fsl.bbclass	2019-03-05 10:42:05.904051060 +0530
+@@ -163,6 +163,22 @@
+ 		done
+ 	fi
+ 
++	# Copy overlay device tree file
++        if test -n "${KERNEL_OVERLAYDEVICETREE}"; then
++                for DTS_FILE in ${KERNEL_OVERLAYDEVICETREE}; do
++                        DTS_BASE_NAME=`basename ${DTS_FILE} | awk -F "." '{print $1}'`
++                        if [ -e "${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtbo" ]; then
++                                kernel_bin="`readlink ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${MACHINE}.bin`"
++                                kernel_bin_for_dtb="`readlink ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtbo | sed "s,$DTS_BASE_NAME,${MACHINE},g;s,\.dtbo$,.bin,g"`"
++                                if [ $kernel_bin = $kernel_bin_for_dtb ]; then
++                                        mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${DTS_BASE_NAME}.dtbo ::/${DTS_BASE_NAME}.dtbo
++                                fi
++                        else
++                                bbfatal "${DTS_FILE} does not exist."
++                        fi
++                done
++        fi
++
+ 	# Copy extlinux.conf to images that have U-Boot Extlinux support.
+ 	if [ "${UBOOT_EXTLINUX}" = "1" ]; then
+ 		mmd -i ${WORKDIR}/boot.img ::/extlinux

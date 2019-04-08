@@ -1,0 +1,20 @@
+--- ../sources/meta-fsl-bsp-release/imx/meta-bsp/recipes-bsp/imx-mkimage/imx-boot_0.2.bb	2019-03-05 23:58:57.418051447 +0530
++++ ../sources/meta-seco-bsp-release-imx8-3-0-0/imx-boot_0.2.bb	2019-03-06 00:01:01.918046240 +0530
+@@ -90,7 +90,7 @@
+         cp ${DEPLOY_DIR_IMAGE}/signed_*_imx8m.bin             ${S}/${SOC_DIR}/
+         cp ${DEPLOY_DIR_IMAGE}/u-boot-spl.bin-${MACHINE}-${UBOOT_CONFIG} ${S}/${SOC_DIR}/u-boot-spl.bin
+         cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/${UBOOT_DTB_NAME}   ${S}/${SOC_DIR}/
+-        cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/u-boot-nodtb.bin-${MACHINE}-${UBOOT_CONFIG}    ${S}/${SOC_DIR}/u-boot-nodtb.bin
++        cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/u-boot-nodtb.bin    ${S}/${SOC_DIR}/u-boot-nodtb.bin
+         cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/mkimage_uboot       ${S}/${SOC_DIR}/
+ 
+         cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/${ATF_MACHINE_NAME} ${S}/${SOC_DIR}/bl31.bin
+@@ -124,7 +124,7 @@
+     # mkimage for i.MX8
+     for target in ${IMXBOOT_TARGETS}; do
+         echo "building ${SOC_TARGET} - ${target}"
+-        make SOC=${SOC_TARGET} ${target}
++        make SOC=${SOC_TARGET} dtbs=${UBOOT_DTB_NAME} ${target}
+         if [ -e "${S}/${SOC_DIR}/flash.bin" ]; then
+             cp ${S}/${SOC_DIR}/flash.bin ${S}/${BOOT_CONFIG_MACHINE}-${target}
+         fi
